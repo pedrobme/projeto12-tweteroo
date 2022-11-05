@@ -1,27 +1,36 @@
-import express, { json } from 'express'
+import express, { json } from "express";
 
-const app = express()
+const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
-const users = []
+const users = [];
 
-const tweets = []
+const tweets = [];
 
-app.post('/sign-up', (req,res) => {
+app.post("/sign-up", (req, res) => {
+  users.push(req.body);
 
-    users.push(req.body)
+  console.log(users);
+  res.send("OK");
+});
 
-    console.log(users)
-    res.send('OK')
-})
+app.post("/tweets", (req, res) => {
+  tweets.push(req.body);
 
-app.post('/tweets', (req,res) => {
+  console.log(tweets);
+  res.send("OK");
+});
 
-    tweets.push(req.body)
+app.get("/tweets", (req, res) => {
+  const feedList = tweets.map((tweet) => {
+    const userInfo = users.find((user) => user.username === tweet.username);
+    tweet.avatar = userInfo.avatar
+    return (tweet);
+  });
+  console.log(feedList);
 
-    console.log(tweets)
-    res.send('OK')
-})
+  res.send(feedList.slice(-10))
+});
 
-app.listen(5000, ()=>console.log('Server running at port 5000'))
+app.listen(5000, () => console.log("Server running at port 5000"));
